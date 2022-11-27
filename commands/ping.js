@@ -3,8 +3,12 @@ const { SlashCommandBuilder } = require('discord.js');
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('ping')
-		.setDescription('Replies with Pong!'),
+		.setDescription('Replies with Pong!')
+		.addUserOption(option =>
+			option.setName('user')
+				.setDescription('specify user')),
 	async execute(interaction) {
-		await interaction.reply('Pong!');
+		const target = interaction.options.getUser('user');
+		await interaction.reply(`Pong! to ${target.username}`);
 	},
 };

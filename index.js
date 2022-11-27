@@ -3,10 +3,12 @@ require('dotenv').config(); // to use .env type file
 const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Events, GatewayIntentBits, Collection  } = require('discord.js');
-const { token, prefix } = require('./config.json');
+const guildId = process.env.GUILDID;
+const clientId = process.env.CLIENTID;
+const token = process.env.TOKEN;
 
 // Create a new client instance
-const client = new Client({ intents: [GatewayIntentBits.Guilds],disableMentions: 'everyone', });
+const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMessages  ],disableMentions: 'everyone', });
 
 client.commands = new Collection();
 
@@ -41,6 +43,7 @@ client.on(Events.InteractionCreate, async interaction => {
 	}
 
 	try {
+		// run command
 		await command.execute(interaction);
 	} catch (error) {
 		console.error(error);
@@ -49,4 +52,4 @@ client.on(Events.InteractionCreate, async interaction => {
 });
 
 // Log in to Discord with your client's token
-client.login(process.env.TOKEN);
+client.login(token);
