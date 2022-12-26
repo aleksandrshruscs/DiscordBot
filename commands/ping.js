@@ -8,7 +8,10 @@ module.exports = {
 			option.setName('user')
 				.setDescription('specify user')),
 	async execute(interaction) {
-		const target = interaction.options.getUser('user');
-		await interaction.reply(`Pong! to <@${target.id}>`);
+		let target = interaction.options.getUser('user');
+		if(!target){
+			target =  await interaction.user.fetch(true);
+		}
+		await interaction.reply(`Pong! to ${target}`);
 	},
 };
