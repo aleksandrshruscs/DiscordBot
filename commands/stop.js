@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder ,ActionRowBuilder, ButtonBuilder, ButtonStyle,} = require('discord.js');
 const { getVoiceConnection } = require('@discordjs/voice');
 
 
@@ -7,7 +7,16 @@ module.exports = {
 		.setName('stop')
 		.setDescription('stop audio in the voice chat'),
 	async execute(interaction) {
-        //const connection = getVoiceConnection(interaction.guild.id);
-		//connection.state.subscription.player.stop();
+
+		const row = new ActionRowBuilder()
+		.addComponents(
+			new ButtonBuilder()
+				.setCustomId('Press')
+				.setLabel('Press')
+				.setStyle(ButtonStyle.Primary)
+				.setDisabled(false)
+		);
+		//Send message
+		await interaction.reply({ content: 'Idle', components: [row] });
 	},
 };

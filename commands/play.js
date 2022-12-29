@@ -27,6 +27,11 @@ module.exports = {
 		if(connection){
 			console.log('connection');
 
+			try{
+				connection.state.subscription.unsubscribe();
+			}catch(error){
+
+			}
 			const subscription = connection.subscribe(player);
 
 			connection.on(VoiceConnectionStatus.Ready, () => {

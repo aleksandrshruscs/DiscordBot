@@ -35,6 +35,7 @@ for (const file of commandFiles) {
 	}
 }
 var isPause = false;
+var isStop = false;
 client.on(Events.InteractionCreate, async interaction => {
 	if (interaction.isChatInputCommand()){
 
@@ -65,23 +66,53 @@ client.on(Events.InteractionCreate, async interaction => {
 			console.log('The bot is not in this channel.');
 		}
 		try {
-			const player = connection.state.subscription.player;
+			
+			let player;
+			if(connection.state.subscription){
+				player = connection.state.subscription.player;
+			}
 			if(button === 'pauseunpause'){
 				if(!isPause && player){
 					console.log('button pressed pause ');
 					player.pause();
 					isPause = true;
 					console.log('isPause' + isPause);
+
+					const filter = interaction => interaction.customId === 'pauseunpause' ;
+					console.log('filter ' + filter.customId);
+					const collector = interaction.channel.createMessageComponentCollector({ filter: filter, max: 1, time: 300 });
+			
+					collector.on('collect', async (m) => {
+							await m.deferUpdate();
+							return await m.editReply({ content: `ACCEPT!`, embeds: [], components: [] });
+					}); 
+
 				}else if (isPause && player){
 					console.log('button pressed unpause ');
 					player.unpause();
 					isPause = false;
 					console.log('isPause' + isPause);
 				}
-			}else if(button === 'stop' && player){
+
+			}else if(button === 'stop' && player ){
 				player.stop();
+				console.log('isStop');
+				connection.state.subscription.unsubscribe();
 				isPause = false;
+				isStop = true;
 				await interaction.reply('You stopped the Song');
+
+			}else if(button === 'Press' ){
+				const filter = interaction => interaction.customId === 'Press' ;
+				console.log('filter ' + filter);
+				const collector = interaction.channel.createMessageComponentCollector({  filter, time: 5000 });
+				console.log('collector ' + collector);
+				collector.on('collect', async (m) => {
+						//await m.deferUpdate();
+						console.log('collector.on collect');
+						await m.update({ content: `ACCEPT!`, embeds: [], components: [] });
+				}); 
+				collector.on('end', collected => console.log(`Collected ${collected.size} items`));
 			}
 			return;
 		} catch (error) {
