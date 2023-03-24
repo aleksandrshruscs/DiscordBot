@@ -1,15 +1,16 @@
 // Require the necessary discord.js classes
 require('dotenv').config(); // to use .env type file
-const fs = require('node:fs');
-const path = require('node:path');
-const { Client, Events, GatewayIntentBits, Collection,   } = require('discord.js');
-const {  getVoiceConnection  } = require('@discordjs/voice');
 const guildId = process.env.GUILDID;
 const clientId = process.env.CLIENTID;
 const token = process.env.TOKEN;
+const fs = require('node:fs');
+const path = require('node:path');
+const { Client, Events, GatewayIntentBits, Collection, ActionRowBuilder, ButtonBuilder, ButtonStyle  } = require('discord.js');
+const {  getVoiceConnection  } = require('@discordjs/voice');
+
 
 // Create a new client instance
-const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildVoiceStates  ],disableMentions: 'everyone', });
+const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildVoiceStates, GatewayIntentBits.GuildMessageTyping  ],disableMentions: 'everyone', });
 
 client.commands = new Collection();
 
@@ -124,5 +125,39 @@ client.on(Events.InteractionCreate, async interaction => {
 	}
 });
 
+client.on("voiceStateUpdate", function(oldMember, newMember){
+	var currentdate = new Date(); 
+	var datetime = "" + currentdate.getDate() + "/"
+					+ (currentdate.getMonth()+1)  + "/" 
+					+ currentdate.getFullYear() + " @ "  
+					+ currentdate.getHours() + ":"  
+					+ currentdate.getMinutes() + ":" 
+					+ currentdate.getSeconds();
+	console.log(`[${datetime}] a user changes voice state => : \n #> oldMember => ${JSON.stringify(oldMember)} \n #> newMember => ${JSON.stringify(newMember)} `);
+
+});
+
+client.on("debug", function(info){
+	var currentdate = new Date(); 
+var datetime = "" + currentdate.getDate() + "/"
+                + (currentdate.getMonth()+1)  + "/" 
+                + currentdate.getFullYear() + " @ "  
+                + currentdate.getHours() + ":"  
+                + currentdate.getMinutes() + ":" 
+                + currentdate.getSeconds();
+    console.log(`[${datetime}] debug => : ${info}`);
+});
+
+client.on("messageCreate", function(message){
+    console.log(`a message was created`);
+    console.log({message});
+});
+
+client.on("error", function(error){
+    console.error(`client's WebSocket encountered a connection error: ${error}`);
+});
+
+
 // Log in to Discord with your client's token
 client.login(token);
+
